@@ -1,9 +1,9 @@
 import { Question } from '@/components/Question';
-import type { Question as QuestionType } from '@/lib/types';
-import { MESSAGE_TYPES, SOCKET_URL } from '@/lib/utils';
+import { useWs } from '@/components/WSContext';
+import type { Message, QuestionMessage, Question as QuestionType } from '@/lib/types';
+import { MESSAGE_TYPES } from '@/lib/utils';
 import { createFileRoute } from '@tanstack/react-router'
-import { useCallback, useEffect, useState } from 'react'
-import useWebSocket from 'react-use-websocket';
+import {  useEffect, useState } from 'react'
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -36,29 +36,31 @@ const DEFAULT: QuestionType = {
   ],
 }
 
-
 function App() {
   const [questionData, setQuestionData] = useState<QuestionType | null>(null);
-  const [messageHistory, setMessageHistory] = useState<MessageEvent<any>[]>([]);
-
-  const {sendJsonMessage, lastMessage} = useWebSocket(SOCKET_URL, {
-    onOpen: () => console.log('connected'),
-    onClose: () => console.log('disconnected'),
-    onError: (err) => console.error('error:', err),
-    shouldReconnect: () => true,
-  });
+  const {lastJsonMessage} = useWs();
 
   useEffect(() => {
-    if (lastMessage !== null) {
-      setMessageHistory((prev) => prev.concat(lastMessage));
+    const ls = window.localStorage.getItem('lastQuestion');
+
+    if (ls) {
+      setQuestionData(JSON.parse(ls));
     }
-  }, [lastMessage]);
-
-  const handleSend = useCallback(() => sendJsonMessage({type: MESSAGE_TYPES.reveal}), []);
+  }, []);
 
   useEffect(() => {
-    setTimeout(() => setQuestionData(DEFAULT), 1 * 1000);
-  }, []);
+    if (lastJsonMessage !== null) {
+      switch ((lastJsonMessage as Message).type) {
+        case MESSAGE_TYPES.question:
+          window.localStorage.setItem('lastQuestion', JSON.stringify((lastJsonMessage as QuestionMessage).question));
+          setQuestionData((lastJsonMessage as QuestionMessage).question);
+          break;
+        case MESSAGE_TYPES.end:
+          setQuestionData(null);
+          break;
+      }
+    }
+  }, [lastJsonMessage]);
 
   const getSpinner = () => {
     const rand = Math.floor(Math.random() * 2);
@@ -69,9 +71,9 @@ function App() {
   }
 
   return (
-    <div className="text-center min-h-screen flex flex-col items-center justify-center bg-background text-white">
+    <div className="text-center min-h-screen flex flex-col items-center justify-center bg-background text-white gap-4">
+      {!questionData && <span>You're in, let's wait for a question to start.</span>}
       {!questionData ? getSpinner() : <Question id={questionData.id} title={questionData.title} answers={questionData.answers} />}
-      <button onClick={handleSend}>reveal</button>
     </div>
   )
 }

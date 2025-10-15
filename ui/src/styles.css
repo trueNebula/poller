@@ -7,6 +7,7 @@
 @theme {
   --color-background: oklch(0.23 0.0159 299.64);
   --color-card: oklch(0.2982 0.0159 299.64);
+  --color-input: oklch(0.2804 0.0159 299.64);
   --color-selected: oklch(0.2982 0.0412 299.64);
   --color-glare: oklch(0.8769 0.0412 299.64);
   --color-shadow: oklch(0.138 0.0412 299.64);

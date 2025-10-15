@@ -11,23 +11,23 @@ export interface Answer {
 }
 
 export interface QuestionMessage {
-  type: 'QUESTION_CHANGE',
+  type: string // 'QUESTION_CHANGE',
   question: Question,
 }
 
 export interface AnswerMessage {
-  type: 'ANSWER_SUBMISSION',
+  type: string // 'ANSWER_SUBMISSION',
   uuid: string,
   questionId: number,
   answerId: number,
 }
 
 export interface RevealMessage {
-  type: 'ANSWERS_REVEAL',
+  type: string // 'ANSWERS_REVEAL',
 }
 
 export interface EndMessage {
-  type: 'QUESTION_HIDE',
+  type: string // 'QUESTION_HIDE',
 }
 
 export type Message = QuestionMessage | AnswerMessage | RevealMessage | EndMessage;

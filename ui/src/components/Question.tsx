@@ -1,11 +1,13 @@
+import { useWs } from "@/components/WSContext";
 import type { Message, Question } from "@/lib/types";
-import { MESSAGE_TYPES, SOCKET_URL, uuid } from "@/lib/utils";
+import { MESSAGE_TYPES, uuid } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import useWebSocket from "react-use-websocket";
 
 export function Question({id, title, answers}: Question) {
-  const [selected, setSelected] = useState<number | null>(null);
-  const {sendJsonMessage, lastJsonMessage} = useWebSocket(SOCKET_URL);
+  const [selected, setSelected] = useState<number | null>(
+    Number.parseInt(window.localStorage.getItem('answer') ?? '') ?? null
+  );
+  const {sendJsonMessage, lastJsonMessage} = useWs();
   const [reveal, setReveal] = useState(false);
 
     useEffect(() => {
@@ -17,6 +19,7 @@ export function Question({id, title, answers}: Question) {
             setReveal(true);
             break;
           case MESSAGE_TYPES.question:
+            window.localStorage.removeItem('answer')
             setSelected(null);
             setReveal(false);
             break;
@@ -28,6 +31,7 @@ export function Question({id, title, answers}: Question) {
     if (selected !== null || reveal) {
       return;
     }
+    window.localStorage.setItem('answer', answers[idx].id.toString());
     sendJsonMessage({type: MESSAGE_TYPES.answer, uuid, questionId: id, answerId: answers[idx].id});
     setSelected(idx)
   }
