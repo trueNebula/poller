@@ -11,32 +11,32 @@ export const Route = createFileRoute('/admin')({
   component: RouteComponent,
 })
 
-const DEFAULT: Question = {
-  id: -1,
-  title: "Second question!",
-  answers: [
-    {
-      id: 0,
-      title: "No",
-      isCorrect: false,
-    },
-    {
-      id: 1,
-      title: "Not",
-      isCorrect: false,
-    },
-    {
-      id: 2,
-      title: "Yes",
-      isCorrect: true,
-    },
-    {
-      id: 3,
-      title: "Maybe",
-      isCorrect: false,
-    },
-  ],
-}
+// const DEFAULT: Question = {
+//   id: -1,
+//   title: "Second question!",
+//   answers: [
+//     {
+//       id: 0,
+//       title: "No",
+//       isCorrect: false,
+//     },
+//     {
+//       id: 1,
+//       title: "Not",
+//       isCorrect: false,
+//     },
+//     {
+//       id: 2,
+//       title: "Yes",
+//       isCorrect: true,
+//     },
+//     {
+//       id: 3,
+//       title: "Maybe",
+//       isCorrect: false,
+//     },
+//   ],
+// }
 
 function RouteComponent() {
   const [sentQuestion, setSentQuestion] = useState<Question | null>(
